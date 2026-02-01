@@ -38,7 +38,7 @@ export const EmployeeList: React.FC = () => {
 
         try {
             await employeeService.deleteEmployee(employeeId);
-            setEmployees(employees.filter(emp => emp.id !== employeeId));
+            setEmployees(employees.filter(emp => emp.employeeId !== employeeId));
             showToast('success', 'Employee deleted successfully');
         } catch (err) {
             showToast('error', 'Failed to delete employee');
@@ -156,7 +156,7 @@ export const EmployeeList: React.FC = () => {
                                             <div style={{ display: 'flex', gap: '0.5rem' }}>
                                                 <Button
                                                     variant="danger"
-                                                    onClick={() => handleDeleteEmployee(employee.id)}
+                                                    onClick={() => handleDeleteEmployee(employee.employeeId)}
                                                 >
                                                     Delete
                                                 </Button>
