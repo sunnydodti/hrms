@@ -1,9 +1,7 @@
 import asyncio
 import os
 
-# Disable uvloop on Render/PaaS platforms to avoid networking issues
-# uvloop can cause IPv6 connectivity problems on cloud platforms
-if os.getenv("RENDER") or os.getenv("DYNO"):  # Render or Heroku detection
+if os.getenv("RENDER") or os.getenv("DYNO"):
     asyncio.set_event_loop_policy(asyncio.DefaultEventLoopPolicy())
 
 from fastapi import FastAPI, Request, status
@@ -15,18 +13,14 @@ from app.routes import employees, attendance, dashboard, health
 from app.database.connection import db
 from app.middleware.error_handler import ErrorHandlerMiddleware
 
-# Lifespan context manager
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
     await db.connect()
-    print("✅ Application started successfully")
+    print("Application started successfully")
     yield
-    # Shutdown
     await db.disconnect()
-    print("👋 Application shutdown")
+    print("Application shutdown")
 
-# Initialize FastAPI app
 app = FastAPI(
     title="HRMS Lite API",
     description="Lightweight Human Resource Management System API",
@@ -36,10 +30,8 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Add Error Middleware
 app.add_middleware(ErrorHandlerMiddleware)
 
-# CORS configuration
 allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:3000").split(",")
 
 app.add_middleware(
@@ -51,7 +43,6 @@ app.add_middleware(
 )
 
 
-# Root endpoint
 @app.get("/", tags=["Root"])
 async def root():
     """Root endpoint - API information"""
@@ -62,7 +53,6 @@ async def root():
         "health": "/api/health"
     }
 
-# Debug endpoint for network connectivity testing (remove in production)
 @app.get("/debug/dbhost", tags=["Debug"])
 async def debug_db_host():
     """Debug endpoint to test database host connectivity"""
@@ -85,7 +75,6 @@ async def debug_db_host():
         }
 
 
-# Include routers with /api prefix
 app.include_router(employees.router, prefix="/api")
 app.include_router(attendance.router, prefix="/api")
 app.include_router(dashboard.router, prefix="/api")

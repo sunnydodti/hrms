@@ -9,6 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
 from app.models.employee import EmployeeCreate, EmployeeResponse, EmployeeDeleteResponse
 from app.models.employee_model import Employee
+from app.models.attendance_model import Attendance, AttendanceStatus
 from app.database.connection import db
 
 
@@ -17,7 +18,6 @@ class EmployeeService:
 
     async def _generate_employee_id(self, session) -> str:
         """Generate a unique employee ID in format EMP001, EMP002, etc."""
-        # Get the highest existing employee ID number
         result = await session.execute(
             select(func.max(func.cast(func.substr(Employee.employee_id, 4), Integer)))
             .where(Employee.employee_id.like('EMP%'))
@@ -38,19 +38,16 @@ class EmployeeService:
         """
         async with db.get_session() as session:
             try:
-                # Generate employee ID if not provided
                 employee_id = employee_data.employeeId
                 if not employee_id:
                     employee_id = await self._generate_employee_id(session)
 
-                # Check if employee_id already exists
                 existing = await session.execute(
                     select(Employee).where(Employee.employee_id == employee_id)
                 )
                 if existing.scalar_one_or_none():
                     raise ValueError("Employee ID already exists")
 
-                # Create new employee
                 employee = Employee(
                     employee_id=employee_id,
                     full_name=employee_data.fullName,
@@ -77,14 +74,24 @@ class EmployeeService:
 
     async def get_all_employees(self) -> List[EmployeeResponse]:
         """
-        Get all employees
+        Get all employees with their total present days count
 
         Returns:
             List of all employees
         """
         async with db.get_session() as session:
-            result = await session.execute(select(Employee))
-            employees = result.scalars().all()
+            # Subquery to count present days
+            present_subquery = (
+                select(func.count(Attendance.id))
+                .where(Attendance.employee_id == Employee.employee_id)
+                .where(Attendance.status == AttendanceStatus.Present)
+                .label("present_count")
+            )
+
+            result = await session.execute(
+                select(Employee, present_subquery)
+            )
+            rows = result.all()
 
             return [
                 EmployeeResponse(
@@ -93,14 +100,15 @@ class EmployeeService:
                     fullName=emp.full_name,
                     email=emp.email,
                     department=emp.department,
-                    createdAt=emp.created_at
+                    createdAt=emp.created_at,
+                    presentCount=present_count
                 )
-                for emp in employees
+                for emp, present_count in rows
             ]
 
     async def get_employee_by_id(self, employee_id: str) -> EmployeeResponse:
         """
-        Get employee by employee ID (e.g., EMP001)
+        Get employee by employee ID (e.g., EMP001) with present days count
         
         Args:
             employee_id: Employee identifier (e.g., EMP001)
@@ -112,20 +120,31 @@ class EmployeeService:
             ValueError: If employee not found
         """
         async with db.get_session() as session:
-            employee = await session.execute(
-                select(Employee).where(Employee.employee_id == employee_id)
+            # Subquery to count present days
+            present_subquery = (
+                select(func.count(Attendance.id))
+                .where(Attendance.employee_id == employee_id)
+                .where(Attendance.status == AttendanceStatus.Present)
+                .label("present_count")
             )
-            employee = employee.scalar_one_or_none()
-            if not employee:
+
+            result = await session.execute(
+                select(Employee, present_subquery)
+                .where(Employee.employee_id == employee_id)
+            )
+            row = result.first()
+            if not row:
                 raise ValueError("Employee not found")
 
+            emp, present_count = row
             return EmployeeResponse(
-                id=str(employee.id),
-                employeeId=employee.employee_id,
-                fullName=employee.full_name,
-                email=employee.email,
-                department=employee.department,
-                createdAt=employee.created_at
+                id=str(emp.id),
+                employeeId=emp.employee_id,
+                fullName=emp.full_name,
+                email=emp.email,
+                department=emp.department,
+                createdAt=emp.created_at,
+                presentCount=present_count
             )
 
     async def delete_employee(self, employee_id: str) -> EmployeeDeleteResponse:

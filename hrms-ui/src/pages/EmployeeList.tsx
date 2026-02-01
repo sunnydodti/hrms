@@ -33,7 +33,7 @@ export const EmployeeList: React.FC = () => {
     };
 
     const handleDeleteEmployee = async (employeeId: string) => {
-        if (!window.confirm('Are you sure you want to delete this employee?')) {
+        if (!window.confirm(`Are you sure you want to delete employee ${employeeId}? This action cannot be undone.`)) {
             return;
         }
 
@@ -98,7 +98,8 @@ export const EmployeeList: React.FC = () => {
                                     <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Full Name</th>
                                     <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Email</th>
                                     <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Department</th>
-                                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Actions</th>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest text-center">Present Days</th>
+                                    <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-widest">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-[#2A2A2A]">
@@ -112,12 +113,15 @@ export const EmployeeList: React.FC = () => {
                                                 {employee.email}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className="bg-[#1F2937] text-gray-300 px-2.5 py-1 rounded text-xs font-medium">
-                                                {employee.department}
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                                            {employee.department}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-center">
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#064E3B]/20 text-[#A7F3D0] ring-1 ring-[#064E3B]/50">
+                                                {employee.presentCount || 0} days
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <div className="flex items-center gap-3">
                                                 <button
                                                     onClick={() => handleDeleteEmployee(employee.employeeId)}

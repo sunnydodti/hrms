@@ -23,6 +23,7 @@ export const Attendance: React.FC = () => {
         date: new Date().toISOString().split('T')[0],
         status: 'Present'
     });
+    const [filterDate, setFilterDate] = useState<string>('');
 
     useEffect(() => {
         fetchEmployees();
@@ -105,6 +106,12 @@ export const Attendance: React.FC = () => {
         );
     }
 
+
+    const filteredHistory = attendanceHistory.filter(record => {
+        if (!filterDate) return true;
+        return record.date === filterDate;
+    });
+
     return (
         <div className="flex flex-col gap-8">
             <div>
@@ -166,8 +173,8 @@ export const Attendance: React.FC = () => {
                                         type="button"
                                         onClick={() => setFormData(prev => ({ ...prev, status: 'Present' }))}
                                         className={`flex items-center justify-center gap-2 py-3 rounded-md transition-all ${formData.status === 'Present'
-                                                ? 'bg-[#064E3B] text-[#A7F3D0] ring-1 ring-[#A7F3D0]'
-                                                : 'bg-[#111111] text-gray-500 ring-1 ring-[#2A2A2A]'
+                                            ? 'bg-[#064E3B] text-[#A7F3D0] ring-1 ring-[#A7F3D0]'
+                                            : 'bg-[#111111] text-gray-500 ring-1 ring-[#2A2A2A]'
                                             }`}
                                     >
                                         <CheckCircle2 size={18} />
@@ -177,8 +184,8 @@ export const Attendance: React.FC = () => {
                                         type="button"
                                         onClick={() => setFormData(prev => ({ ...prev, status: 'Absent' }))}
                                         className={`flex items-center justify-center gap-2 py-3 rounded-md transition-all ${formData.status === 'Absent'
-                                                ? 'bg-[#451A1A] text-[#FECACA] ring-1 ring-[#FECACA]'
-                                                : 'bg-[#111111] text-gray-500 ring-1 ring-[#2A2A2A]'
+                                            ? 'bg-[#451A1A] text-[#FECACA] ring-1 ring-[#FECACA]'
+                                            : 'bg-[#111111] text-gray-500 ring-1 ring-[#2A2A2A]'
                                             }`}
                                     >
                                         <XCircle size={18} />
@@ -199,8 +206,33 @@ export const Attendance: React.FC = () => {
                     </Card>
                 </div>
 
-                <div className="lg:col-span-2">
+                <div className="lg:col-span-2 flex flex-col gap-6">
                     <Card title="Attendance History">
+                        {selectedEmployee && !loadingHistory && (
+                            <div className="px-6 py-4 border-b border-[#2A2A2A] flex flex-wrap items-center justify-between gap-4 bg-[#111111]/50">
+                                <div className="flex items-center gap-2 text-sm text-gray-400">
+                                    <Calendar size={14} />
+                                    <span>Filter by date:</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="date"
+                                        value={filterDate}
+                                        onChange={(e) => setFilterDate(e.target.value)}
+                                        className="bg-[#111111] border-[#2A2A2A] text-white text-xs rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#2563EB] outline-none"
+                                    />
+                                    {filterDate && (
+                                        <button
+                                            onClick={() => setFilterDate('')}
+                                            className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                                        >
+                                            Clear
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
                         {!selectedEmployee ? (
                             <div className="flex flex-col items-center justify-center py-24 text-gray-500">
                                 <User size={48} className="opacity-20 mb-4" />
@@ -214,6 +246,16 @@ export const Attendance: React.FC = () => {
                             <div className="text-center py-24 text-gray-500">
                                 <p>No records found for this employee</p>
                             </div>
+                        ) : filteredHistory.length === 0 ? (
+                            <div className="text-center py-24 text-gray-500">
+                                <p>No records found for the selected date</p>
+                                <button
+                                    onClick={() => setFilterDate('')}
+                                    className="text-blue-400 mt-2 hover:underline"
+                                >
+                                    Clear filter
+                                </button>
+                            </div>
                         ) : (
                             <div className="overflow-x-auto">
                                 <table className="min-w-full">
@@ -225,7 +267,7 @@ export const Attendance: React.FC = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-[#2A2A2A]">
-                                        {(attendanceHistory || []).map((record) => (
+                                        {filteredHistory.map((record) => (
                                             <tr key={record.id} className="hover:bg-white/[0.02] transition-colors">
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
                                                     {new Date(record.date).toLocaleDateString(undefined, {

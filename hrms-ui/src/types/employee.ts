@@ -5,6 +5,7 @@ export interface Employee {
     email: string;
     department: string;
     createdAt: string;
+    presentCount?: number;
 }
 
 export interface EmployeeCreate {

@@ -22,6 +22,7 @@ class EmployeeResponse(EmployeeBase):
     """Schema for employee response"""
     id: str = Field(..., description="Database ID")
     createdAt: datetime = Field(..., description="Creation timestamp")
+    presentCount: Optional[int] = Field(0, description="Total days marked as present")
 
     class Config:
         json_schema_extra = {

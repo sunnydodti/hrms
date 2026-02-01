@@ -25,11 +25,9 @@ async def get_dashboard_stats():
     - Recent attendance
     """
     async with db.get_session() as session:
-        # Total Employees
         total_employees = await session.execute(select(func.count(Employee.id)))
         total_employees = total_employees.scalar() or 0
 
-        # Attendance Today
         today = date.today()
         
         present_today = await session.execute(
@@ -46,18 +44,17 @@ async def get_dashboard_stats():
         )
         absent_today = absent_today.scalar() or 0
 
-        # Active Departments
         active_departments = await session.execute(
             select(func.count(distinct(Employee.department)))
         )
         active_departments = active_departments.scalar() or 0
 
-        # Recent Attendance (Last 5 records with employee details)
         recent_attendance_query = (
             select(Attendance, Employee)
             .join(Employee, Attendance.employee_id == Employee.employee_id)
-            .order_by(desc(Attendance.date), desc(Attendance.created_at))
-            .limit(5)
+            .where(Attendance.date == today)
+            .order_by(desc(Attendance.created_at))
+            .limit(10)
         )
         recent_attendance_result = await session.execute(recent_attendance_query)
         recent_attendance_rows = recent_attendance_result.all()

@@ -38,7 +38,6 @@ class AttendanceService:
                 if not employee:
                     raise ValueError("Employee not found")
 
-                # Create attendance record
                 attendance = Attendance(
                     employee_id=attendance_data.employeeId,
                     date=attendance_data.date,
@@ -86,7 +85,6 @@ class AttendanceService:
                 if not employee.scalar_one_or_none():
                     raise ValueError("Employee not found")
 
-                # Get attendance records
                 result = await session.execute(
                     select(Attendance)
                     .where(Attendance.employee_id == employee_id)

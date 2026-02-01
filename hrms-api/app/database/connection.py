@@ -22,7 +22,7 @@ class Database:
         global engine, async_session_maker
 
         if not DATABASE_URL:
-            print("❌ DATABASE_URL is not set in environment variables")
+            print("DATABASE_URL is not set in environment variables")
             return
 
         try:
@@ -58,17 +58,17 @@ class Database:
                 expire_on_commit=False
             )
 
-            print(f"✅ PostgreSQL connected successfully using {driver_name}")
-            print(f"📍 Using database: {'Pooler (Production)' if use_pooler else 'Direct (Development)'}")
+            print(f"PostgreSQL connected successfully using {driver_name}")
+            print(f"Using database: {'Pooler (Production)' if use_pooler else 'Direct (Development)'}")
         except Exception as e:
-            print(f"❌ Failed to connect to PostgreSQL: {e}")
+            print(f"Failed to connect to PostgreSQL: {e}")
             raise e
 
     async def disconnect(self):
         global engine
         if engine:
             await engine.dispose()
-            print("👋 PostgreSQL disconnected")
+            print("PostgreSQL disconnected")
 
     def get_session(self):
         return async_session_maker()
