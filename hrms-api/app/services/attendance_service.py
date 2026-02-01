@@ -30,6 +30,10 @@ class AttendanceService:
         """
         async with db.get_session() as session:
             try:
+                from datetime import date as date_obj
+                if attendance_data.date > date_obj.today():
+                    raise ValueError("Cannot mark attendance for future dates")
+
                 # Check if employee exists
                 employee = await session.execute(
                     select(Employee).where(Employee.employee_id == attendance_data.employeeId)
