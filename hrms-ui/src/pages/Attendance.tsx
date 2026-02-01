@@ -166,7 +166,7 @@ export const Attendance: React.FC = () => {
                                         type="button"
                                         onClick={() => setFormData(prev => ({ ...prev, status: 'Present' }))}
                                         className={`flex items-center justify-center gap-2 py-3 rounded-md transition-all ${formData.status === 'Present'
-                                                ? 'bg-[#064E3B] text-[#10B981] ring-1 ring-[#10B981]'
+                                                ? 'bg-[#064E3B] text-[#A7F3D0] ring-1 ring-[#A7F3D0]'
                                                 : 'bg-[#111111] text-gray-500 ring-1 ring-[#2A2A2A]'
                                             }`}
                                     >
@@ -177,7 +177,7 @@ export const Attendance: React.FC = () => {
                                         type="button"
                                         onClick={() => setFormData(prev => ({ ...prev, status: 'Absent' }))}
                                         className={`flex items-center justify-center gap-2 py-3 rounded-md transition-all ${formData.status === 'Absent'
-                                                ? 'bg-[#451A1A] text-[#EF4444] ring-1 ring-[#EF4444]'
+                                                ? 'bg-[#451A1A] text-[#FECACA] ring-1 ring-[#FECACA]'
                                                 : 'bg-[#111111] text-gray-500 ring-1 ring-[#2A2A2A]'
                                             }`}
                                     >

@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { employeeService } from '../services/employeeService';
 import { type Employee } from '../types/employee';
 import { useToast } from '../context/ToastContext';
-import { Plus, Trash2, Mail, ExternalLink } from 'lucide-react';
+import { Plus, Trash2, Mail } from 'lucide-react';
 
 export const EmployeeList: React.FC = () => {
     const [employees, setEmployees] = useState<Employee[]>([]);

@@ -69,7 +69,7 @@ export const Dashboard: React.FC = () => {
                         <div>
                             <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">Present Today</div>
                         </div>
-                        <div className="p-2 bg-green-500/10 rounded-lg text-green-500 ring-1 ring-green-500/20">
+                        <div className="p-2 bg-[#064E3B]/20 rounded-lg text-[#A7F3D0] ring-1 ring-[#064E3B]/50">
                             <CheckCircle size={20} />
                         </div>
                     </div>
@@ -86,7 +86,7 @@ export const Dashboard: React.FC = () => {
                         <div>
                             <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">Absent Today</div>
                         </div>
-                        <div className="p-2 bg-red-500/10 rounded-lg text-red-500 ring-1 ring-red-500/20">
+                        <div className="p-2 bg-[#451A1A]/20 rounded-lg text-[#FECACA] ring-1 ring-[#451A1A]/50">
                             <XCircle size={20} />
                         </div>
                     </div>
@@ -103,7 +103,7 @@ export const Dashboard: React.FC = () => {
                         <div>
                             <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">Departments</div>
                         </div>
-                        <div className="p-2 bg-yellow-500/10 rounded-lg text-yellow-500 ring-1 ring-yellow-500/20">
+                        <div className="p-2 bg-[#453006]/20 rounded-lg text-[#FDE68A] ring-1 ring-[#453006]/50">
                             <Building2 size={20} />
                         </div>
                     </div>
