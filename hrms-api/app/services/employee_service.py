@@ -4,7 +4,7 @@ Handles business logic for employee operations
 """
 
 from typing import List
-from sqlalchemy import select
+from sqlalchemy import select, func, Integer
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
 from app.models.employee import EmployeeCreate, EmployeeResponse, EmployeeDeleteResponse
@@ -14,6 +14,17 @@ from app.database.connection import db
 
 class EmployeeService:
     """Service class for employee operations"""
+
+    async def _generate_employee_id(self, session) -> str:
+        """Generate a unique employee ID in format EMP001, EMP002, etc."""
+        # Get the highest existing employee ID number
+        result = await session.execute(
+            select(func.max(func.cast(func.substr(Employee.employee_id, 4), Integer)))
+            .where(Employee.employee_id.like('EMP%'))
+        )
+        max_num = result.scalar() or 0
+        next_num = max_num + 1
+        return f"EMP{next_num:03d}"
 
     async def create_employee(self, employee_data: EmployeeCreate) -> EmployeeResponse:
         """
@@ -27,16 +38,21 @@ class EmployeeService:
         """
         async with db.get_session() as session:
             try:
+                # Generate employee ID if not provided
+                employee_id = employee_data.employeeId
+                if not employee_id:
+                    employee_id = await self._generate_employee_id(session)
+
                 # Check if employee_id already exists
                 existing = await session.execute(
-                    select(Employee).where(Employee.employee_id == employee_data.employeeId)
+                    select(Employee).where(Employee.employee_id == employee_id)
                 )
                 if existing.scalar_one_or_none():
                     raise HTTPException(status_code=400, detail="Employee ID already exists")
 
                 # Create new employee
                 employee = Employee(
-                    employee_id=employee_data.employeeId,
+                    employee_id=employee_id,
                     full_name=employee_data.fullName,
                     email=employee_data.email,
                     department=employee_data.department

@@ -10,9 +10,12 @@ class EmployeeBase(BaseModel):
     department: str = Field(..., min_length=1, description="Department name")
 
 
-class EmployeeCreate(EmployeeBase):
+class EmployeeCreate(BaseModel):
     """Schema for creating a new employee"""
-    pass
+    fullName: str = Field(..., min_length=1, description="Employee full name")
+    email: EmailStr = Field(..., description="Employee email address")
+    department: str = Field(..., min_length=1, description="Department name")
+    employeeId: Optional[str] = Field(None, description="Optional employee identifier (auto-generated if not provided)")
 
 
 class EmployeeResponse(EmployeeBase):

@@ -71,7 +71,7 @@ hrms-api/
 - `GET /api/health` - Health check
 
 ### Employees
-- `POST /api/employees` - Create employee
+- `POST /api/employees` - Create employee (employeeId auto-generated if not provided)
 - `GET /api/employees` - Get all employees
 - `GET /api/employees/{employee_id}` - Get employee by ID
 - `DELETE /api/employees/{employee_id}` - Delete employee
@@ -102,7 +102,7 @@ hrms-api/
 
 4. **Run development server**
    ```bash
-   python main.py
+   uvicorn main:app --reload --host 0.0.0.0 --port 8000
    ```
 
 5. **Access API**
@@ -127,10 +127,10 @@ The application automatically handles database initialization on startup:
 
 3. **Running in Production**
    ```bash
-   # Using uvicorn
-   uvicorn main:app --host 0.0.0.0 --port 8000
+   # Using uvicorn directly
+   uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
 
-   # Or using gunicorn with uvicorn workers
+   # Or using gunicorn with uvicorn workers (recommended for production)
    gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
    ```
 

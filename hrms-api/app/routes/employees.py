@@ -20,13 +20,13 @@ router = APIRouter(
     response_model=EmployeeResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Create a new employee",
-    description="Create a new employee with unique employee ID"
+    description="Create a new employee (employee ID is auto-generated if not provided)"
 )
 async def create_employee(employee: EmployeeCreate):
     """
     Create a new employee with the following information:
     
-    - **employeeId**: Unique employee identifier (e.g., EMP001)
+    - **employeeId**: (Optional) Unique employee identifier (auto-generated as EMP001, EMP002, etc. if not provided)
     - **fullName**: Employee's full name
     - **email**: Valid email address
     - **department**: Department name
