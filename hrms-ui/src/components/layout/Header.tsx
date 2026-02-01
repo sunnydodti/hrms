@@ -13,7 +13,7 @@ export const Header: React.FC = () => {
     ];
 
     return (
-        <header className="bg-blue-600 shadow-md">
+        <header className="bg-[#2563EB] shadow-md">
             <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-20">
                     <div className="flex-shrink-0">
@@ -33,8 +33,8 @@ export const Header: React.FC = () => {
                                     <Link
                                         to={item.path}
                                         className={`text-sm font-medium transition-colors duration-200 ${location.pathname === item.path
-                                                ? 'text-white bg-blue-700 px-3 py-2 rounded-md'
-                                                : 'text-blue-100 hover:text-white hover:bg-blue-500 px-3 py-2 rounded-md'
+                                            ? 'text-white bg-blue-700 px-3 py-2 rounded-md'
+                                            : 'text-blue-100 hover:text-white hover:bg-blue-500 px-3 py-2 rounded-md'
                                             }`}
                                     >
                                         {item.label}
@@ -65,8 +65,8 @@ export const Header: React.FC = () => {
                                         to={item.path}
                                         onClick={() => setIsMenuOpen(false)}
                                         className={`block text-sm font-medium px-3 py-2 rounded-md ${location.pathname === item.path
-                                                ? 'text-white bg-blue-700'
-                                                : 'text-blue-100 hover:text-white hover:bg-blue-500'
+                                            ? 'text-white bg-blue-700'
+                                            : 'text-blue-100 hover:text-white hover:bg-blue-500'
                                             }`}
                                     >
                                         {item.label}

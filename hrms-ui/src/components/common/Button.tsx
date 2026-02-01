@@ -16,35 +16,24 @@ export const Button: React.FC<ButtonProps> = ({
     disabled,
     ...props
 }) => {
-    const baseClasses = 'btn';
-    const variantClasses = {
-        primary: 'btn-primary',
-        secondary: 'btn-secondary',
-        danger: 'btn-danger',
-    };
+    const baseClasses = 'inline-flex items-center justify-center px-4 py-2 rounded-md transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed';
 
-    const classes = `${baseClasses} ${variantClasses[variant]} ${className}`;
+    const variants = {
+        primary: 'bg-[#2563EB] hover:bg-[#1D4ED8] text-white shadow-sm',
+        secondary: 'bg-[#1F2937] hover:bg-[#374151] text-gray-300 ring-1 ring-[#374151]',
+        danger: 'bg-[#EF4444] hover:bg-[#DC2626] text-white shadow-sm',
+    };
 
     return (
         <button
-            className={classes}
+            className={`${baseClasses} ${variants[variant]} ${className}`}
             disabled={disabled || isLoading}
             {...props}
         >
             {isLoading ? (
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <div
-                        style={{
-                            width: '1rem',
-                            height: '1rem',
-                            border: '2px solid white',
-                            borderTop: '2px solid transparent',
-                            borderRadius: '50%',
-                            animation: 'spin 1s linear infinite',
-                            marginRight: '0.5rem'
-                        }}
-                    ></div>
-                    Loading...
+                <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>Loading...</span>
                 </div>
             ) : (
                 children

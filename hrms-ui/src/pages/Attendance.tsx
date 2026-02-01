@@ -8,6 +8,7 @@ import { attendanceService } from '../services/attendanceService';
 import { type Employee } from '../types/employee';
 import { type Attendance as AttendanceRecord, type AttendanceCreate } from '../types/attendance';
 import { useToast } from '../context/ToastContext';
+import { Calendar, User, CheckCircle2, XCircle } from 'lucide-react';
 
 export const Attendance: React.FC = () => {
     const { showToast } = useToast();
@@ -18,7 +19,6 @@ export const Attendance: React.FC = () => {
     const [loadingHistory, setLoadingHistory] = useState(false);
     const [submitting, setSubmitting] = useState(false);
 
-    // Form state
     const [formData, setFormData] = useState<Omit<AttendanceCreate, 'employeeId'>>({
         date: new Date().toISOString().split('T')[0],
         status: 'Present'
@@ -88,15 +88,10 @@ export const Attendance: React.FC = () => {
             } as AttendanceCreate);
 
             showToast('success', 'Attendance marked successfully');
-            // Refresh history
             fetchAttendanceHistory(selectedEmployee);
         } catch (err: any) {
             const errorMessage = err.message || 'Failed to mark attendance';
-            if (errorMessage.includes('already exists')) {
-                showToast('error', 'Attendance already marked for this date');
-            } else {
-                showToast('error', errorMessage);
-            }
+            showToast('error', errorMessage);
         } finally {
             setSubmitting(false);
         }
@@ -113,28 +108,28 @@ export const Attendance: React.FC = () => {
     return (
         <div className="flex flex-col gap-8">
             <div>
-                <h1 className="text-3xl font-bold text-gray-900">
+                <h1 className="text-3xl font-bold text-white">
                     Attendance
                 </h1>
-                <p className="text-gray-500 mt-2">
+                <p className="text-gray-400 mt-2">
                     Mark and view employee attendance records
                 </p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Left Column: Mark Attendance Form */}
                 <div className="lg:col-span-1">
                     <Card title="Mark Attendance">
-                        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                        <form onSubmit={handleSubmit} className="flex flex-col gap-6 p-6">
                             <div>
-                                <label htmlFor="employee" className="block text-sm font-medium text-gray-700 mb-2">
-                                    Employee <span className="text-red-500">*</span>
+                                <label htmlFor="employee" className="flex items-center gap-2 text-sm font-bold text-gray-500 uppercase tracking-widest mb-3">
+                                    <User size={14} />
+                                    Employee
                                 </label>
                                 <select
                                     id="employee"
                                     value={selectedEmployee}
                                     onChange={handleEmployeeChange}
-                                    className="form-input w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    className="w-full bg-[#111111] border-[#2A2A2A] text-white rounded-md px-4 py-2 focus:ring-2 focus:ring-[#2563EB] outline-none"
                                     required
                                 >
                                     <option value="">Select employee</option>
@@ -147,8 +142,9 @@ export const Attendance: React.FC = () => {
                             </div>
 
                             <div>
-                                <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-2">
-                                    Date <span className="text-red-500">*</span>
+                                <label htmlFor="date" className="flex items-center gap-2 text-sm font-bold text-gray-500 uppercase tracking-widest mb-3">
+                                    <Calendar size={14} />
+                                    Date
                                 </label>
                                 <input
                                     type="date"
@@ -156,87 +152,82 @@ export const Attendance: React.FC = () => {
                                     name="date"
                                     value={formData.date}
                                     onChange={handleInputChange}
-                                    className="form-input w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    className="w-full bg-[#111111] border-[#2A2A2A] text-white rounded-md px-4 py-2 focus:ring-2 focus:ring-[#2563EB] outline-none"
                                     required
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Status <span className="text-red-500">*</span>
+                                <label className="flex items-center gap-2 text-sm font-bold text-gray-500 uppercase tracking-widest mb-3">
+                                    Status
                                 </label>
-                                <div className="flex gap-6 mt-2">
-                                    <label className="flex items-center gap-2 cursor-pointer">
-                                        <input
-                                            type="radio"
-                                            name="status"
-                                            value="Present"
-                                            checked={formData.status === 'Present'}
-                                            onChange={handleInputChange}
-                                            className="text-blue-600 focus:ring-blue-500"
-                                        />
-                                        <span>Present</span>
-                                    </label>
-                                    <label className="flex items-center gap-2 cursor-pointer">
-                                        <input
-                                            type="radio"
-                                            name="status"
-                                            value="Absent"
-                                            checked={formData.status === 'Absent'}
-                                            onChange={handleInputChange}
-                                            className="text-blue-600 focus:ring-blue-500"
-                                        />
-                                        <span>Absent</span>
-                                    </label>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData(prev => ({ ...prev, status: 'Present' }))}
+                                        className={`flex items-center justify-center gap-2 py-3 rounded-md transition-all ${formData.status === 'Present'
+                                                ? 'bg-[#064E3B] text-[#10B981] ring-1 ring-[#10B981]'
+                                                : 'bg-[#111111] text-gray-500 ring-1 ring-[#2A2A2A]'
+                                            }`}
+                                    >
+                                        <CheckCircle2 size={18} />
+                                        Present
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData(prev => ({ ...prev, status: 'Absent' }))}
+                                        className={`flex items-center justify-center gap-2 py-3 rounded-md transition-all ${formData.status === 'Absent'
+                                                ? 'bg-[#451A1A] text-[#EF4444] ring-1 ring-[#EF4444]'
+                                                : 'bg-[#111111] text-gray-500 ring-1 ring-[#2A2A2A]'
+                                            }`}
+                                    >
+                                        <XCircle size={18} />
+                                        Absent
+                                    </button>
                                 </div>
                             </div>
 
-                            <div className="pt-4">
-                                <Button
-                                    type="submit"
-                                    isLoading={submitting}
-                                    className="w-full"
-                                    disabled={!selectedEmployee}
-                                >
-                                    Mark Attendance
-                                </Button>
-                            </div>
+                            <Button
+                                type="submit"
+                                isLoading={submitting}
+                                className="w-full mt-2"
+                                disabled={!selectedEmployee}
+                            >
+                                Mark Attendance
+                            </Button>
                         </form>
                     </Card>
                 </div>
 
-                {/* Right Column: Attendance History */}
                 <div className="lg:col-span-2">
-                    <Card title={selectedEmployee ? `Attendance History` : "Attendance History"}>
+                    <Card title="Attendance History">
                         {!selectedEmployee ? (
-                            <div className="text-center py-12 text-gray-500">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto mb-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                </svg>
-                                <p>Select an employee to view their attendance history</p>
+                            <div className="flex flex-col items-center justify-center py-24 text-gray-500">
+                                <User size={48} className="opacity-20 mb-4" />
+                                <p>Select an employee to view history</p>
                             </div>
                         ) : loadingHistory ? (
-                            <div className="flex justify-center py-12">
+                            <div className="flex justify-center py-24">
                                 <Loading />
                             </div>
                         ) : (!attendanceHistory || attendanceHistory.length === 0) ? (
-                            <div className="text-center py-12 text-gray-500">
-                                <p>No attendance records found for this employee</p>
+                            <div className="text-center py-24 text-gray-500">
+                                <p>No records found for this employee</p>
                             </div>
                         ) : (
                             <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gray-50">
+                                <table className="min-w-full">
+                                    <thead className="bg-[#111111]">
                                         <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Logged At</th>
+                                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Date</th>
+                                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Status</th>
+                                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Logged At</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="bg-white divide-y divide-gray-200">
+                                    <tbody className="divide-y divide-[#2A2A2A]">
                                         {(attendanceHistory || []).map((record) => (
-                                            <tr key={record.id} className="hover:bg-gray-50">
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                                            <tr key={record.id} className="hover:bg-white/[0.02] transition-colors">
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
                                                     {new Date(record.date).toLocaleDateString(undefined, {
                                                         weekday: 'short',
                                                         year: 'numeric',

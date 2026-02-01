@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { employeeService } from '../services/employeeService';
 import { type Employee } from '../types/employee';
 import { useToast } from '../context/ToastContext';
+import { Plus, Trash2, Mail, ExternalLink } from 'lucide-react';
 
 export const EmployeeList: React.FC = () => {
     const [employees, setEmployees] = useState<Employee[]>([]);
@@ -47,119 +48,84 @@ export const EmployeeList: React.FC = () => {
 
     if (loading) {
         return (
-            <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
+            <div className="flex justify-center p-12">
                 <Loading size="lg" />
             </div>
         );
     }
 
-    if (error) {
-        return (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
-                }}>
-                    <div>
-                        <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111827' }}>
-                            Employees
-                        </h1>
-                        <p style={{ color: '#6b7280', marginTop: '0.5rem' }}>
-                            Manage employee records
-                        </p>
-                    </div>
-
-                    <Link to="/employees/add">
-                        <Button>Add Employee</Button>
-                    </Link>
-                </div>
-
-                <Card>
-                    <div style={{ textAlign: 'center', padding: '3rem' }}>
-                        <p style={{ color: '#dc2626', marginBottom: '1rem' }}>{error}</p>
-                        <Button onClick={fetchEmployees}>Try Again</Button>
-                    </div>
-                </Card>
-            </div>
-        );
-    }
-
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between'
-            }}>
+        <div className="flex flex-col gap-8">
+            <div className="flex items-center justify-between">
                 <div>
-                    <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111827' }}>
+                    <h1 className="text-3xl font-bold text-white">
                         Employees
                     </h1>
-                    <p style={{ color: '#6b7280', marginTop: '0.5rem' }}>
+                    <p className="text-gray-400 mt-2">
                         Manage employee records ({(employees || []).length} total)
                     </p>
                 </div>
 
                 <Link to="/employees/add">
-                    <Button>Add Employee</Button>
+                    <Button className="flex items-center gap-2">
+                        <Plus size={18} />
+                        Add Employee
+                    </Button>
                 </Link>
             </div>
 
             <Card>
-                {(!employees || employees.length === 0) ? (
-                    <div style={{ textAlign: 'center', padding: '3rem' }}>
-                        <p style={{ color: '#6b7280', marginBottom: '1rem' }}>
+                {(!employees || employees.length === 0) && !error ? (
+                    <div className="text-center py-12">
+                        <p className="text-gray-400 mb-4">
                             No employees found
                         </p>
                         <Link to="/employees/add">
-                            <Button>Add First Employee</Button>
+                            <Button variant="secondary">Add First Employee</Button>
                         </Link>
                     </div>
+                ) : error ? (
+                    <div className="text-center py-12">
+                        <p className="text-red-400 mb-4">{error}</p>
+                        <Button onClick={fetchEmployees} variant="secondary">Try Again</Button>
+                    </div>
                 ) : (
-                    <div style={{ overflowX: 'auto' }}>
-                        <table className="table" style={{ width: '100%' }}>
-                            <thead>
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full">
+                            <thead className="bg-[#111111]">
                                 <tr>
-                                    <th>Employee ID</th>
-                                    <th>Full Name</th>
-                                    <th>Email</th>
-                                    <th>Department</th>
-                                    <th>Created</th>
-                                    <th>Actions</th>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Employee ID</th>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Full Name</th>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Email</th>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Department</th>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody className="divide-y divide-[#2A2A2A]">
                                 {(employees || []).map((employee) => (
-                                    <tr key={employee.id}>
-                                        <td style={{ fontWeight: '500' }}>{employee.employeeId}</td>
-                                        <td>{employee.fullName}</td>
-                                        <td>
-                                            <a href={`mailto:${employee.email}`} style={{ color: '#2563eb' }}>
+                                    <tr key={employee.id} className="hover:bg-white/[0.02] transition-colors">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{employee.employeeId}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{employee.fullName}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                                            <div className="flex items-center gap-2">
+                                                <Mail size={14} className="text-gray-500" />
                                                 {employee.email}
-                                            </a>
+                                            </div>
                                         </td>
-                                        <td>
-                                            <span style={{
-                                                backgroundColor: '#f3f4f6',
-                                                padding: '0.25rem 0.5rem',
-                                                borderRadius: '0.25rem',
-                                                fontSize: '0.875rem'
-                                            }}>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <span className="bg-[#1F2937] text-gray-300 px-2.5 py-1 rounded text-xs font-medium">
                                                 {employee.department}
                                             </span>
                                         </td>
-                                        <td style={{ color: '#6b7280' }}>
-                                            {new Date(employee.createdAt).toLocaleDateString()}
-                                        </td>
-                                        <td>
-                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                                <Button
-                                                    variant="danger"
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center gap-3">
+                                                <button
                                                     onClick={() => handleDeleteEmployee(employee.employeeId)}
+                                                    className="text-red-400 hover:text-red-300 transition-colors p-1"
+                                                    title="Delete Employee"
                                                 >
-                                                    Delete
-                                                </Button>
+                                                    <Trash2 size={18} />
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>

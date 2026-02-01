@@ -51,86 +51,86 @@ export const Dashboard: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card className="p-6 bg-[#1f2937] shadow-lg rounded-xl border border-gray-800">
+                <Card className="p-6">
                     <div className="flex justify-between items-start mb-4">
                         <div>
-                            <div className="text-sm font-medium text-gray-400 uppercase tracking-wide">Total Employees</div>
+                            <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">Total Employees</div>
                         </div>
-                        <div className="p-3 bg-blue-500/10 rounded-lg text-blue-500">
-                            <Users size={24} />
+                        <div className="p-2 bg-blue-500/10 rounded-lg text-blue-500 ring-1 ring-blue-500/20">
+                            <Users size={20} />
                         </div>
                     </div>
-                    <div className="text-3xl font-bold text-white mb-1">{stats.totalEmployees}</div>
-                    <div className="text-sm text-gray-500">Active employees</div>
+                    <div className="text-4xl font-bold text-white mb-1">{stats.totalEmployees}</div>
+                    <div className="text-sm text-gray-400">Active employees</div>
                 </Card>
 
-                <Card className="p-6 bg-gray-800 border-gray-700">
+                <Card className="p-6">
                     <div className="flex justify-between items-start mb-4">
                         <div>
-                            <div className="text-sm font-medium text-gray-400 uppercase tracking-wide">Present Today</div>
+                            <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">Present Today</div>
                         </div>
-                        <div className="p-3 bg-green-500/10 rounded-lg text-green-500">
-                            <CheckCircle size={24} />
+                        <div className="p-2 bg-green-500/10 rounded-lg text-green-500 ring-1 ring-green-500/20">
+                            <CheckCircle size={20} />
                         </div>
                     </div>
-                    <div className="text-3xl font-bold text-white mb-1">{stats.presentToday}</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-4xl font-bold text-white mb-1">{stats.presentToday}</div>
+                    <div className="text-sm text-gray-400">
                         {stats.totalEmployees > 0
                             ? `${Math.round((stats.presentToday / stats.totalEmployees) * 100)}% attendance`
                             : '0% attendance'}
                     </div>
                 </Card>
 
-                <Card className="p-6 bg-gray-800 border-gray-700">
+                <Card className="p-6">
                     <div className="flex justify-between items-start mb-4">
                         <div>
-                            <div className="text-sm font-medium text-gray-400 uppercase tracking-wide">Absent Today</div>
+                            <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">Absent Today</div>
                         </div>
-                        <div className="p-3 bg-red-500/10 rounded-lg text-red-500">
-                            <XCircle size={24} />
+                        <div className="p-2 bg-red-500/10 rounded-lg text-red-500 ring-1 ring-red-500/20">
+                            <XCircle size={20} />
                         </div>
                     </div>
-                    <div className="text-3xl font-bold text-white mb-1">{stats.absentToday}</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-4xl font-bold text-white mb-1">{stats.absentToday}</div>
+                    <div className="text-sm text-gray-400">
                         {stats.totalEmployees > 0
                             ? `${Math.round((stats.absentToday / stats.totalEmployees) * 100)}% absent`
                             : '0% absent'}
                     </div>
                 </Card>
 
-                <Card className="p-6 bg-gray-800 border-gray-700">
+                <Card className="p-6">
                     <div className="flex justify-between items-start mb-4">
                         <div>
-                            <div className="text-sm font-medium text-gray-400 uppercase tracking-wide">Departments</div>
+                            <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">Departments</div>
                         </div>
-                        <div className="p-3 bg-yellow-500/10 rounded-lg text-yellow-500">
-                            <Building2 size={24} />
+                        <div className="p-2 bg-yellow-500/10 rounded-lg text-yellow-500 ring-1 ring-yellow-500/20">
+                            <Building2 size={20} />
                         </div>
                     </div>
-                    <div className="text-3xl font-bold text-white mb-1">{stats.activeDepartments}</div>
-                    <div className="text-sm text-gray-500">Active departments</div>
+                    <div className="text-4xl font-bold text-white mb-1">{stats.activeDepartments}</div>
+                    <div className="text-sm text-gray-400">Active departments</div>
                 </Card>
             </div>
 
-            <Card title="Today's Attendance" className="bg-[#1f2937] shadow-lg rounded-xl border border-gray-800">
-                {(!stats.recentAttendance || stats.recentAttendance.length === 0) ? (
+            <Card title="Today's Attendance">
+                {stats.recentAttendance.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
                         No recent attendance records
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-700">
-                            <thead className="bg-gray-900/50">
+                        <table className="min-w-full">
+                            <thead className="bg-[#111111]">
                                 <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Employee ID</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Employee Name</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Department</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Employee ID</th>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Employee Name</th>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Department</th>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Status</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-700">
+                            <tbody className="divide-y divide-[#2A2A2A]">
                                 {(stats.recentAttendance || []).map((record) => (
-                                    <tr key={record.id} className="hover:bg-gray-700/50">
+                                    <tr key={record.id} className="hover:bg-white/[0.02] transition-colors">
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                             {record.employeeId}
                                         </td>
