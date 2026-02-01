@@ -48,7 +48,8 @@ class Database:
                 pool_size=5,
                 max_overflow=10,
                 pool_timeout=30,
-                pool_recycle=3600,
+                pool_recycle=1800,  # Recyle connections faster to avoid stale sessions
+                pool_pre_ping=True, # Test connections before use to recover from server disconnects
                 connect_args=connect_args,
             )
 
