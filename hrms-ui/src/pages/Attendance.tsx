@@ -81,8 +81,10 @@ export const Attendance: React.FC = () => {
             return;
         }
 
-        const today = new Date().toISOString().split('T')[0];
-        if (formData.date > today) {
+        const today = new Date();
+        const localDate = new Date(today.getTime() - (today.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+
+        if (formData.date > localDate) {
             showToast('error', 'Cannot mark attendance for future dates');
             return;
         }
@@ -165,7 +167,7 @@ export const Attendance: React.FC = () => {
                                     name="date"
                                     value={formData.date}
                                     onChange={handleInputChange}
-                                    max={new Date().toISOString().split('T')[0]}
+                                    max={new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().split('T')[0]}
                                     className="w-full bg-[#111111] border-[#2A2A2A] text-white rounded-md px-4 py-2 focus:ring-2 focus:ring-[#2563EB] outline-none"
                                     required
                                 />
