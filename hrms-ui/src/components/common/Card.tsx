@@ -11,7 +11,7 @@ export const Card: React.FC<CardProps> = ({ children, className = '', title }) =
         <div className={`card ${className}`}>
             {title && (
                 <div className="card-header">
-                    <h3 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#111827', margin: 0 }}>
+                    <h3 className="text-lg font-semibold text-white m-0">
                         {title}
                     </h3>
                 </div>

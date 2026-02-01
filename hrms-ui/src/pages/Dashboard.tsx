@@ -51,12 +51,12 @@ export const Dashboard: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card className="p-6 bg-gray-800 border-gray-700">
+                <Card className="p-6 bg-[#1f2937] shadow-lg rounded-xl border border-gray-800">
                     <div className="flex justify-between items-start mb-4">
                         <div>
                             <div className="text-sm font-medium text-gray-400 uppercase tracking-wide">Total Employees</div>
                         </div>
-                        <div className="p-2 bg-blue-900/30 rounded-lg text-blue-400">
+                        <div className="p-3 bg-blue-500/10 rounded-lg text-blue-500">
                             <Users size={24} />
                         </div>
                     </div>
@@ -69,7 +69,7 @@ export const Dashboard: React.FC = () => {
                         <div>
                             <div className="text-sm font-medium text-gray-400 uppercase tracking-wide">Present Today</div>
                         </div>
-                        <div className="p-2 bg-green-900/30 rounded-lg text-green-400">
+                        <div className="p-3 bg-green-500/10 rounded-lg text-green-500">
                             <CheckCircle size={24} />
                         </div>
                     </div>
@@ -86,7 +86,7 @@ export const Dashboard: React.FC = () => {
                         <div>
                             <div className="text-sm font-medium text-gray-400 uppercase tracking-wide">Absent Today</div>
                         </div>
-                        <div className="p-2 bg-red-900/30 rounded-lg text-red-400">
+                        <div className="p-3 bg-red-500/10 rounded-lg text-red-500">
                             <XCircle size={24} />
                         </div>
                     </div>
@@ -103,7 +103,7 @@ export const Dashboard: React.FC = () => {
                         <div>
                             <div className="text-sm font-medium text-gray-400 uppercase tracking-wide">Departments</div>
                         </div>
-                        <div className="p-2 bg-yellow-900/30 rounded-lg text-yellow-400">
+                        <div className="p-3 bg-yellow-500/10 rounded-lg text-yellow-500">
                             <Building2 size={24} />
                         </div>
                     </div>
@@ -112,7 +112,7 @@ export const Dashboard: React.FC = () => {
                 </Card>
             </div>
 
-            <Card title="Today's Attendance" className="bg-gray-800 border-gray-700">
+            <Card title="Today's Attendance" className="bg-[#1f2937] shadow-lg rounded-xl border border-gray-800">
                 {stats.recentAttendance.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
                         No recent attendance records
