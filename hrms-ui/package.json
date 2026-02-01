@@ -16,8 +16,7 @@
         "postcss": "^8.5.6",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
-        "react-router-dom": "^7.13.0",
-        "tailwindcss": "^4.1.18"
+        "react-router-dom": "^7.13.0"
     },
     "devDependencies": {
         "@eslint/js": "^9.39.1",
@@ -32,7 +31,8 @@
         "globals": "^16.5.0",
         "typescript": "~5.9.3",
         "typescript-eslint": "^8.46.4",
-        "vite": "npm:rolldown-vite@7.2.5"
+        "vite": "npm:rolldown-vite@7.2.5",
+        "tailwindcss": "^3.4.1"
     },
     "overrides": {
         "vite": "npm:rolldown-vite@7.2.5"
