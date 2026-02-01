@@ -3,6 +3,7 @@ import { Card } from '../components/common/Card';
 import { Loading } from '../components/common/Loading';
 import { Badge } from '../components/common/Badge';
 import { useToast } from '../context/ToastContext';
+import { ErrorMessage } from '../components/common/ErrorMessage';
 import { dashboardService } from '../services/dashboardService';
 import { type DashboardStats } from '../types/dashboard';
 import { Users, CheckCircle, XCircle, Building2 } from 'lucide-react';
@@ -11,6 +12,7 @@ export const Dashboard: React.FC = () => {
     const { showToast } = useToast();
     const [stats, setStats] = useState<DashboardStats | null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         fetchStats();
@@ -18,9 +20,12 @@ export const Dashboard: React.FC = () => {
 
     const fetchStats = async () => {
         try {
+            setLoading(true);
+            setError(null);
             const data = await dashboardService.getStats();
             setStats(data);
         } catch (err) {
+            setError('Failed to load dashboard statistics');
             showToast('error', 'Failed to load dashboard statistics');
         } finally {
             setLoading(false);
@@ -31,6 +36,19 @@ export const Dashboard: React.FC = () => {
         return (
             <div className="flex justify-center p-12">
                 <Loading size="lg" />
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex flex-col gap-8">
+                <h1 className="text-3xl font-bold text-white">Dashboard</h1>
+                <ErrorMessage
+                    message={error}
+                    onRetry={fetchStats}
+                    className="py-24"
+                />
             </div>
         );
     }

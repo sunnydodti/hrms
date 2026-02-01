@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { employeeService } from '../services/employeeService';
 import { type Employee } from '../types/employee';
 import { useToast } from '../context/ToastContext';
+import { ErrorMessage } from '../components/common/ErrorMessage';
 import { Plus, Trash2, Mail } from 'lucide-react';
 
 export const EmployeeList: React.FC = () => {
@@ -85,10 +86,11 @@ export const EmployeeList: React.FC = () => {
                         </Link>
                     </div>
                 ) : error ? (
-                    <div className="text-center py-12">
-                        <p className="text-red-400 mb-4">{error}</p>
-                        <Button onClick={fetchEmployees} variant="secondary">Try Again</Button>
-                    </div>
+                    <ErrorMessage
+                        message={error}
+                        onRetry={fetchEmployees}
+                        className="border-none bg-transparent py-12"
+                    />
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="min-w-full">

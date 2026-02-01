@@ -8,6 +8,7 @@ import { attendanceService } from '../services/attendanceService';
 import { type Employee } from '../types/employee';
 import { type Attendance as AttendanceRecord, type AttendanceCreate } from '../types/attendance';
 import { useToast } from '../context/ToastContext';
+import { ErrorMessage } from '../components/common/ErrorMessage';
 import { Calendar, User, CheckCircle2, XCircle } from 'lucide-react';
 
 export const Attendance: React.FC = () => {
@@ -17,6 +18,8 @@ export const Attendance: React.FC = () => {
     const [attendanceHistory, setAttendanceHistory] = useState<AttendanceRecord[]>([]);
     const [loadingEmployees, setLoadingEmployees] = useState(true);
     const [loadingHistory, setLoadingHistory] = useState(false);
+    const [errorEmployees, setErrorEmployees] = useState<string | null>(null);
+    const [errorHistory, setErrorHistory] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
 
     const [formData, setFormData] = useState<Omit<AttendanceCreate, 'employeeId'>>({
@@ -34,15 +37,18 @@ export const Attendance: React.FC = () => {
             fetchAttendanceHistory(selectedEmployee);
         } else {
             setAttendanceHistory([]);
+            setErrorHistory(null);
         }
     }, [selectedEmployee]);
 
     const fetchEmployees = async () => {
         try {
             setLoadingEmployees(true);
+            setErrorEmployees(null);
             const data = await employeeService.getAllEmployees();
             setEmployees(Array.isArray(data) ? data : []);
         } catch (err) {
+            setErrorEmployees('Failed to load employees');
             showToast('error', 'Failed to load employees');
         } finally {
             setLoadingEmployees(false);
@@ -52,9 +58,11 @@ export const Attendance: React.FC = () => {
     const fetchAttendanceHistory = async (employeeId: string) => {
         try {
             setLoadingHistory(true);
+            setErrorHistory(null);
             const data = await attendanceService.getAttendanceByEmployee(employeeId);
             setAttendanceHistory(Array.isArray(data) ? data : []);
         } catch (err) {
+            setErrorHistory('Failed to load attendance history');
             showToast('error', 'Failed to load attendance history');
         } finally {
             setLoadingHistory(false);
@@ -110,6 +118,19 @@ export const Attendance: React.FC = () => {
         return (
             <div className="flex justify-center p-12">
                 <Loading size="lg" />
+            </div>
+        );
+    }
+
+    if (errorEmployees) {
+        return (
+            <div className="flex flex-col gap-8">
+                <h1 className="text-3xl font-bold text-white">Attendance</h1>
+                <ErrorMessage
+                    message={errorEmployees}
+                    onRetry={fetchEmployees}
+                    className="py-24"
+                />
             </div>
         );
     }
@@ -250,6 +271,14 @@ export const Attendance: React.FC = () => {
                         ) : loadingHistory ? (
                             <div className="flex justify-center py-24">
                                 <Loading />
+                            </div>
+                        ) : errorHistory ? (
+                            <div className="py-12">
+                                <ErrorMessage
+                                    message={errorHistory}
+                                    onRetry={() => fetchAttendanceHistory(selectedEmployee)}
+                                    className="border-none bg-transparent"
+                                />
                             </div>
                         ) : (!attendanceHistory || attendanceHistory.length === 0) ? (
                             <div className="text-center py-24 text-gray-500">
