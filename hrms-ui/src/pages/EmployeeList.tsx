@@ -22,7 +22,7 @@ export const EmployeeList: React.FC = () => {
             setLoading(true);
             setError(null);
             const data = await employeeService.getAllEmployees();
-            setEmployees(data);
+            setEmployees(Array.isArray(data) ? data : []);
         } catch (err) {
             setError('Failed to load employees');
             showToast('error', 'Failed to load employees');
@@ -97,7 +97,7 @@ export const EmployeeList: React.FC = () => {
                         Employees
                     </h1>
                     <p style={{ color: '#6b7280', marginTop: '0.5rem' }}>
-                        Manage employee records ({employees.length} total)
+                        Manage employee records ({(employees || []).length} total)
                     </p>
                 </div>
 
@@ -107,7 +107,7 @@ export const EmployeeList: React.FC = () => {
             </div>
 
             <Card>
-                {employees.length === 0 ? (
+                {(!employees || employees.length === 0) ? (
                     <div style={{ textAlign: 'center', padding: '3rem' }}>
                         <p style={{ color: '#6b7280', marginBottom: '1rem' }}>
                             No employees found
@@ -130,7 +130,7 @@ export const EmployeeList: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {employees.map((employee) => (
+                                {(employees || []).map((employee) => (
                                     <tr key={employee.id}>
                                         <td style={{ fontWeight: '500' }}>{employee.employeeId}</td>
                                         <td>{employee.fullName}</td>

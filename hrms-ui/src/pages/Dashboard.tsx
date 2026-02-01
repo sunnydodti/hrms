@@ -113,7 +113,7 @@ export const Dashboard: React.FC = () => {
             </div>
 
             <Card title="Today's Attendance" className="bg-[#1f2937] shadow-lg rounded-xl border border-gray-800">
-                {stats.recentAttendance.length === 0 ? (
+                {(!stats.recentAttendance || stats.recentAttendance.length === 0) ? (
                     <div className="text-center py-8 text-gray-500">
                         No recent attendance records
                     </div>
@@ -129,7 +129,7 @@ export const Dashboard: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-700">
-                                {stats.recentAttendance.map((record) => (
+                                {(stats.recentAttendance || []).map((record) => (
                                     <tr key={record.id} className="hover:bg-gray-700/50">
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                             {record.employeeId}

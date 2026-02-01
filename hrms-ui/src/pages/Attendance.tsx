@@ -40,7 +40,7 @@ export const Attendance: React.FC = () => {
         try {
             setLoadingEmployees(true);
             const data = await employeeService.getAllEmployees();
-            setEmployees(data);
+            setEmployees(Array.isArray(data) ? data : []);
         } catch (err) {
             showToast('error', 'Failed to load employees');
         } finally {
@@ -52,7 +52,7 @@ export const Attendance: React.FC = () => {
         try {
             setLoadingHistory(true);
             const data = await attendanceService.getAttendanceByEmployee(employeeId);
-            setAttendanceHistory(data);
+            setAttendanceHistory(Array.isArray(data) ? data : []);
         } catch (err) {
             showToast('error', 'Failed to load attendance history');
         } finally {
@@ -138,7 +138,7 @@ export const Attendance: React.FC = () => {
                                     required
                                 >
                                     <option value="">Select employee</option>
-                                    {employees.map(emp => (
+                                    {(employees || []).map(emp => (
                                         <option key={emp.employeeId} value={emp.employeeId}>
                                             {emp.employeeId} - {emp.fullName}
                                         </option>
@@ -219,7 +219,7 @@ export const Attendance: React.FC = () => {
                             <div className="flex justify-center py-12">
                                 <Loading />
                             </div>
-                        ) : attendanceHistory.length === 0 ? (
+                        ) : (!attendanceHistory || attendanceHistory.length === 0) ? (
                             <div className="text-center py-12 text-gray-500">
                                 <p>No attendance records found for this employee</p>
                             </div>
@@ -234,7 +234,7 @@ export const Attendance: React.FC = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
-                                        {attendanceHistory.map((record) => (
+                                        {(attendanceHistory || []).map((record) => (
                                             <tr key={record.id} className="hover:bg-gray-50">
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
                                                     {new Date(record.date).toLocaleDateString(undefined, {
