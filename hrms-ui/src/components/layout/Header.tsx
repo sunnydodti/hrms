@@ -16,13 +16,18 @@ export const Header: React.FC = () => {
         <header className="bg-[#2563EB] shadow-md">
             <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-20">
-                    <div className="flex-shrink-0">
-                        <h1 className="text-xl font-bold text-white">
-                            HRMS Lite
-                        </h1>
-                        <p className="text-sm text-blue-100 opacity-90">
-                            Human Resource Management System
-                        </p>
+                    <div className="flex-shrink-0 flex items-center gap-4">
+                        <div>
+                            <h1 className="text-xl font-bold text-white leading-tight">
+                                HRMS Lite
+                            </h1>
+                            <p className="text-[10px] text-blue-100 uppercase tracking-widest opacity-80 font-semibold">
+                                System Management
+                            </p>
+                        </div>
+                        <div className="px-2 py-1 bg-white/10 border border-white/20 rounded-md">
+                            <span className="text-[10px] font-bold text-white tracking-widest">ADMIN</span>
+                        </div>
                     </div>
 
                     {/* Desktop Menu */}
