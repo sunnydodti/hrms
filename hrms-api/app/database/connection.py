@@ -1,36 +1,50 @@
-"""
-Database connection module
-This will handle MongoDB connection when implemented
-"""
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+from sqlalchemy.orm import declarative_base
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+Base = declarative_base()
+engine = None
+async_session_maker = None
+
 
 class Database:
-    """Database connection class - placeholder for MongoDB connection"""
     
     def __init__(self):
-        self.client = None
-        self.db = None
+        self.engine = None
+        self.session_maker = None
     
     async def connect(self):
-        """Connect to MongoDB"""
-        # TODO: Implement MongoDB connection
-        # from motor.motor_asyncio import AsyncIOMotorClient
-        # self.client = AsyncIOMotorClient(MONGODB_URI)
-        # self.db = self.client[DATABASE_NAME]
-        pass
+        global engine, async_session_maker
+        
+        db_url = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
+        
+        engine = create_async_engine(
+            db_url,
+            echo=os.getenv("ENVIRONMENT") == "development",
+            future=True
+        )
+        
+        async_session_maker = async_sessionmaker(
+            engine,
+            class_=AsyncSession,
+            expire_on_commit=False
+        )
+        
+        print("✅ PostgreSQL connected successfully")
     
     async def disconnect(self):
-        """Disconnect from MongoDB"""
-        # TODO: Implement MongoDB disconnection
-        # if self.client:
-        #     self.client.close()
-        pass
+        global engine
+        if engine:
+            await engine.dispose()
+            print("👋 PostgreSQL disconnected")
     
-    def get_collection(self, collection_name: str):
-        """Get a collection from the database"""
-        # TODO: Return actual collection
-        # return self.db[collection_name]
-        return None
+    def get_session(self):
+        return async_session_maker()
 
 
-# Global database instance
 db = Database()
