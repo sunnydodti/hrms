@@ -1,28 +1,28 @@
 # HRMS Lite - Development Plan
 
 ## Overview
-This plan outlines the development of a lightweight HRMS with Employee and Attendance management, using a React frontend and Node.js/Express backend with MongoDB, ensuring a clean UI and production-ready structure.
+This plan outlines the development of a lightweight HRMS with Employee and Attendance management, using a React frontend and FastAPI backend with MongoDB, ensuring a clean UI and production-ready structure.
 
 ---
 
 ## Tech Stack
 
 ### Frontend
-- **Framework**: React 18 (with Vite)
+- **Framework**: React 18 (with Vite) - Static build
 - **Styling**: Tailwind CSS
 - **HTTP Client**: Axios
 - **Routing**: React Router v6
-- **State Management**: React Context API (for simple state)
+- **State Management**: React useState/useEffect (simple state)
 
 ### Backend
-- **Runtime**: Node.js 18+
-- **Framework**: Express.js
-- **Database**: MongoDB with Mongoose ODM
-- **Validation**: express-validator
-- **CORS**: cors middleware
+- **Runtime**: Python 3.10+
+- **Framework**: FastAPI
+- **Database**: MongoDB with Motor (async) or PyMongo
+- **Validation**: Pydantic models (built-in with FastAPI)
+- **CORS**: FastAPI CORS middleware
 
 ### Deployment
-- **Frontend**: Vercel
+- **Frontend**: Cloudflare Pages (static hosting)
 - **Backend**: Render / Railway
 - **Database**: MongoDB Atlas (free tier)
 
@@ -32,7 +32,7 @@ This plan outlines the development of a lightweight HRMS with Employee and Atten
 
 ```
 hrms/
-├── client/                 # React frontend
+├── client/                 # React frontend (static)
 │   ├── src/
 │   │   ├── components/     # Reusable UI components
 │   │   ├── pages/          # Page components
@@ -41,17 +41,18 @@ hrms/
 │   │   ├── App.jsx
 │   │   └── main.jsx
 │   ├── package.json
-│   └── vite.config.js
+│   ├── vite.config.js
+│   └── dist/               # Build output for Cloudflare Pages
 │
-├── server/                 # Express backend
-│   ├── src/
-│   │   ├── models/         # Mongoose models
-│   │   ├── routes/         # API routes
-│   │   ├── controllers/    # Route handlers
-│   │   ├── middleware/     # Custom middleware
-│   │   ├── config/         # Database config
-│   │   └── server.js       # Entry point
-│   └── package.json
+├── server/                 # FastAPI backend
+│   ├── app/
+│   │   ├── models/         # Pydantic models & MongoDB schemas
+│   │   ├── routes/         # API route handlers
+│   │   ├── database.py     # Database connection
+│   │   ├── config.py       # Configuration & env vars
+│   │   └── main.py         # FastAPI app entry point
+│   ├── requirements.txt
+│   └── .env
 │
 └── README.md
 ```
@@ -68,17 +69,19 @@ hrms/
 - [ ] Create monorepo folder structure (`client/`, `server/`)
 
 #### 1.2 Backend Setup
-- [ ] Initialize Node.js project: `npm init -y`
+- [ ] Create Python virtual environment: `python -m venv venv`
+- [ ] Activate virtual environment
 - [ ] Install dependencies:
-  - express
-  - mongoose
-  - cors
-  - dotenv
-  - express-validator
-- [ ] Install dev dependencies: nodemon
-- [ ] Create basic Express server with health check endpoint
+  - fastapi
+  - uvicorn[standard]
+  - pymongo or motor (async)
+  - pydantic
+  - python-dotenv
+  - python-multipart
+- [ ] Create basic FastAPI server with health check endpoint
 - [ ] Setup MongoDB connection (local or Atlas)
 - [ ] Configure environment variables (`.env`)
+- [ ] Create requirements.txt
 
 #### 1.3 Frontend Setup
 - [ ] Initialize React with Vite: `npm create vite@latest`
@@ -86,67 +89,233 @@ hrms/
   - react-router-dom
   - axios
   - tailwindcss
+  - autoprefixer
+  - postcss
 - [ ] Configure Tailwind CSS
-- [ ] Setup basic routing structure
-- [ ] Create environment config for API URL
+- [ ] Setup basic routing structure (client-side only)
+- [ ] Create environment config for API URL (.env for production)
+- [ ] Configure Vite for static build (SPA mode)
 
 ---
 
 ### Phase 2: Backend Development (2-2.5 hours)
 
-#### 2.1 Database Models
+#### 2.1 Database Models & Schemas
 
-**Employee Model** (`models/Employee.js`)
+**Employee Model** (`models/employee.py`)
+```python
+# Pydantic Schema
+class EmployeeCreate(BaseModel):
+    employeeId: str
+    fullName: str
+    email: EmailStr
+    department: str
+
+class EmployeeResponse(BaseModel):
+    id: str
+    employeeId: str
+    fullName: str
+    email: str
+    department: str
+    createdAt: datetime
+
+# MongoDB Document
+{
+    "_id": ObjectId,
+    "employeeId": str (unique index),
+    "fullName": str,
+    "email": str,
+    "department": str,
+    "createdAt": datetime
+}
 ```
-- employeeId: String (unique, required)
-- fullName: String (required)
-- email: String (required, validated)
-- department: String (required)
-- createdAt: Date (auto)
+
+**Attendance Model** (`models/attendance.py`)
+```python
+# Pydantic Schema
+class AttendanceCreate(BaseModel):
+    employeeId: str
+    date: date
+    status: Literal["Present", "Absent"]
+
+class AttendanceResponse(BaseModel):
+    id: str
+    employeeId: str
+    date: date
+    status: str
+    createdAt: datetime
+
+# MongoDB Document
+{
+    "_id": ObjectId,
+    "employeeId": str,
+    "date": datetime,
+    "status": str (enum: Present/Absent),
+    "createdAt": datetime
+}
+# Compound unique index: [employeeId, date]
 ```
 
-**Attendance Model** (`models/Attendance.js`)
+#### 2.2 API Endpoints Documentation
+
+### Employee Endpoints
+
+**1. Create Employee**
 ```
-- employeeId: ObjectId (ref: Employee, required)
-- date: Date (required)
-- status: String (enum: ['Present', 'Absent'], required)
-- createdAt: Date (auto)
-- Compound unique index: [employeeId, date]
+POST /api/employees
+Content-Type: application/json
+
+Request Body:
+{
+  "employeeId": "EMP001",
+  "fullName": "John Doe",
+  "email": "john.doe@company.com",
+  "department": "Engineering"
+}
+
+Success Response (201 Created):
+{
+  "id": "507f1f77bcf86cd799439011",
+  "employeeId": "EMP001",
+  "fullName": "John Doe",
+  "email": "john.doe@company.com",
+  "department": "Engineering",
+  "createdAt": "2026-02-01T10:30:00Z"
+}
+
+Error Responses:
+- 400 Bad Request: Invalid data (missing fields, invalid email)
+- 409 Conflict: Employee ID already exists
 ```
 
-#### 2.2 Employee API Endpoints
+**2. Get All Employees**
+```
+GET /api/employees
 
-- [ ] `POST /api/employees` - Create employee
-  - Validate all required fields
-  - Check unique employeeId
-  - Validate email format
-  - Return 201 on success, 400/409 on error
+Success Response (200 OK):
+[
+  {
+    "id": "507f1f77bcf86cd799439011",
+    "employeeId": "EMP001",
+    "fullName": "John Doe",
+    "email": "john.doe@company.com",
+    "department": "Engineering",
+    "createdAt": "2026-02-01T10:30:00Z"
+  },
+  ...
+]
 
-- [ ] `GET /api/employees` - List all employees
-  - Return array of employees
-  - Return 200 with empty array if none
+Empty Response (200 OK):
+[]
+```
 
-- [ ] `DELETE /api/employees/:id` - Delete employee
-  - Check if employee exists
-  - Return 200 on success, 404 if not found
+**3. Delete Employee**
+```
+DELETE /api/employees/{employee_id}
 
-#### 2.3 Attendance API Endpoints
+Success Response (200 OK):
+{
+  "message": "Employee deleted successfully",
+  "employeeId": "EMP001"
+}
 
-- [ ] `POST /api/attendance` - Mark attendance
-  - Validate employeeId exists
-  - Validate date and status
-  - Prevent duplicate entries (same employee + date)
-  - Return 201 on success, 400/409 on error
+Error Responses:
+- 404 Not Found: Employee does not exist
+```
 
-- [ ] `GET /api/attendance/:employeeId` - Get attendance by employee
-  - Return attendance records sorted by date (desc)
-  - Return 200 with empty array if none
+### Attendance Endpoints
+
+**4. Mark Attendance**
+```
+POST /api/attendance
+Content-Type: application/json
+
+Request Body:
+{
+  "employeeId": "EMP001",
+  "date": "2026-02-01",
+  "status": "Present"
+}
+
+Success Response (201 Created):
+{
+  "id": "507f1f77bcf86cd799439012",
+  "employeeId": "EMP001",
+  "date": "2026-02-01",
+  "status": "Present",
+  "createdAt": "2026-02-01T10:35:00Z"
+}
+
+Error Responses:
+- 400 Bad Request: Invalid data (invalid date, invalid status)
+- 404 Not Found: Employee does not exist
+- 409 Conflict: Attendance already marked for this date
+```
+
+**5. Get Attendance by Employee**
+```
+GET /api/attendance/{employee_id}
+
+Success Response (200 OK):
+[
+  {
+    "id": "507f1f77bcf86cd799439012",
+    "employeeId": "EMP001",
+    "date": "2026-02-01",
+    "status": "Present",
+    "createdAt": "2026-02-01T10:35:00Z"
+  },
+  {
+    "id": "507f1f77bcf86cd799439013",
+    "employeeId": "EMP001",
+    "date": "2026-01-31",
+    "status": "Present",
+    "createdAt": "2026-01-31T09:00:00Z"
+  },
+  ...
+]
+# Sorted by date (descending)
+
+Empty Response (200 OK):
+[]
+
+Error Responses:
+- 404 Not Found: Employee does not exist
+```
+
+**6. Health Check (Optional)**
+```
+GET /api/health
+
+Success Response (200 OK):
+{
+  "status": "healthy",
+  "timestamp": "2026-02-01T10:40:00Z"
+}
+```
+
+#### 2.3 Implementation Checklist
+
+- [ ] Implement all employee endpoints with Pydantic validation
+- [ ] Implement all attendance endpoints with Pydantic validation
+- [ ] Check unique employeeId constraint
+- [ ] Validate email format (EmailStr)
+- [ ] Prevent duplicate attendance entries (compound index)
+- [ ] Return proper HTTP status codes
+- [ ] Add CORS middleware for frontend access
 
 #### 2.4 Error Handling & Validation
-- [ ] Global error handler middleware
-- [ ] Validation middleware for all POST requests
+- [ ] Use FastAPI's built-in HTTPException for errors
+- [ ] Pydantic automatic validation for request bodies
+- [ ] Custom exception handlers for database errors
 - [ ] Proper HTTP status codes (200, 201, 400, 404, 409, 500)
-- [ ] Consistent error response format
+- [ ] Consistent error response format:
+```json
+{
+  "detail": "Error message",
+  "type": "validation_error" | "not_found" | "conflict"
+}
+```
 
 ---
 
@@ -252,14 +421,18 @@ hrms/
 - [ ] Configure start command: `node src/server.js`
 - [ ] Deploy and verify endpoints
 
-#### 5.2 Frontend Deployment (Vercel)
+#### 5.2 Frontend Deployment (Cloudflare Pages)
 - [ ] Update API base URL to deployed backend
-- [ ] Create `.env.production` with backend URL
+- [ ] Create `.env.production` with backend URL (VITE_API_URL)
+- [ ] Build static files: `npm run build`
 - [ ] Push changes to GitHub
-- [ ] Import project to Vercel
-- [ ] Configure build settings (Vite)
-- [ ] Set environment variables
+- [ ] Connect repository to Cloudflare Pages
+- [ ] Configure build settings:
+  - Build command: `npm run build`
+  - Build output directory: `dist`
+  - Environment variables: VITE_API_URL
 - [ ] Deploy and verify functionality
+- [ ] Configure custom domain (optional)
 
 #### 5.3 Testing
 - [ ] Test all employee operations (add, list, delete)
