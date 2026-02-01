@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from app.routes import employees, attendance, health
+from app.routes import employees, attendance, dashboard, health
 from app.database.connection import db
 
 # Lifespan context manager
@@ -81,4 +81,5 @@ async def debug_db_host():
 # Include routers with /api prefix
 app.include_router(employees.router, prefix="/api")
 app.include_router(attendance.router, prefix="/api")
+app.include_router(dashboard.router, prefix="/api")
 app.include_router(health.router, prefix="/api")
