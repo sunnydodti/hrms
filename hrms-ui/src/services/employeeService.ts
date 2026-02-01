@@ -1,5 +1,5 @@
 import { api } from './api';
-import { Employee, EmployeeCreate, EmployeeResponse, EmployeeDeleteResponse } from '../types/employee';
+import { type Employee, type EmployeeCreate, type EmployeeResponse, type EmployeeDeleteResponse } from '../types/employee';
 
 export const employeeService = {
     // Get all employees

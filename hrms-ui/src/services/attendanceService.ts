@@ -1,5 +1,5 @@
 import { api } from './api';
-import { Attendance, AttendanceCreate, AttendanceResponse } from '../types/attendance';
+import { type Attendance, type AttendanceCreate, type AttendanceResponse } from '../types/attendance';
 
 export const attendanceService = {
     // Mark attendance
