@@ -6,7 +6,8 @@ import os
 if os.getenv("RENDER") or os.getenv("DYNO"):  # Render or Heroku detection
     asyncio.set_event_loop_policy(asyncio.DefaultEventLoopPolicy())
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
@@ -35,13 +36,30 @@ app = FastAPI(
 )
 
 # CORS configuration
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:3000").split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # TODO: Update with specific origins in production
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    """Global exception handler to return detailed errors in development"""
+    print(f"❌ Global Error: {exc}")
+    if os.getenv("ENVIRONMENT") == "development":
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={"detail": str(exc), "type": type(exc).__name__},
+        )
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={"detail": "Internal Server Error"},
+    )
 
 
 # Root endpoint
