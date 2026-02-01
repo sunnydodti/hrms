@@ -1,8 +1,20 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 
 from app.routes import employees, attendance, health
 from app.database.connection import db
+
+# Lifespan context manager
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    await db.connect()
+    print("✅ Application started successfully")
+    yield
+    # Shutdown
+    await db.disconnect()
+    print("👋 Application shutdown")
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -10,7 +22,8 @@ app = FastAPI(
     description="Lightweight Human Resource Management System API",
     version="1.0.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    lifespan=lifespan
 )
 
 # CORS configuration
@@ -21,22 +34,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-# Startup event
-@app.on_event("startup")
-async def startup_event():
-    """Connect to database on startup"""
-    await db.connect()
-    print("✅ Application started successfully")
-
-
-# Shutdown event
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Disconnect from database on shutdown"""
-    await db.disconnect()
-    print("👋 Application shutdown")
 
 
 # Root endpoint

@@ -54,13 +54,15 @@ hrms-api/
 - Delegates to database layer
 
 ### 4. Database (`app/database/`)
-- MongoDB connection management
-- Collection access
-- Query execution
+- PostgreSQL connection management via SQLAlchemy
+- Async database operations
+- Automatic table initialization
+- Session management
 
 ### 5. Models (`app/models/`)
 - Pydantic schemas for validation
 - Request/response models
+- SQLAlchemy ORM models for database
 - Data type definitions
 
 ## API Endpoints
@@ -95,12 +97,12 @@ hrms-api/
 3. **Configure environment**
    ```bash
    copy .env.example .env
-   # Edit .env with your settings
+   # Edit .env with your Supabase PostgreSQL URL
    ```
 
 4. **Run development server**
    ```bash
-   uvicorn main:app --reload --port 8000
+   python main.py
    ```
 
 5. **Access API**
@@ -108,19 +110,55 @@ hrms-api/
    - Docs: http://localhost:8000/docs
    - ReDoc: http://localhost:8000/redoc
 
+## Deployment
+
+### Production Deployment
+
+The application automatically handles database initialization on startup:
+
+1. **Environment Setup**
+   - Set `DATABASE_URL` environment variable with your PostgreSQL connection string
+   - Set `ENVIRONMENT=production` to disable SQL echo logs
+
+2. **Database Initialization**
+   - Tables are created automatically when the app starts
+   - No manual database setup required
+   - Safe to run multiple times (idempotent)
+
+3. **Running in Production**
+   ```bash
+   # Using uvicorn
+   uvicorn main:app --host 0.0.0.0 --port 8000
+
+   # Or using gunicorn with uvicorn workers
+   gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+   ```
+
+### Database Schema
+
+The application uses PostgreSQL with the following features:
+- UUID primary keys with automatic generation
+- Foreign key constraints
+- Unique constraints for attendance (employee + date)
+- Proper indexing for performance
+- Enum types for attendance status
+
 ## Current Status
 
 ✅ Layered architecture implemented  
-✅ All endpoints defined with dummy responses  
+✅ PostgreSQL database integration complete  
+✅ All endpoints with real database operations  
 ✅ Pydantic models for validation  
 ✅ API documentation generated  
-⏳ Database integration pending  
-⏳ Actual business logic pending  
+✅ Automatic database initialization  
+✅ Production-ready deployment setup  
+⏳ Unit tests pending  
+⏳ CI/CD pipeline pending  
 
 ## Next Steps
 
-1. Implement MongoDB connection
-2. Implement actual database operations in services
-3. Add error handling for database operations
-4. Add unit tests
-5. Deploy to production
+1. Add comprehensive unit tests
+2. Set up CI/CD pipeline
+3. Add monitoring and logging
+4. Implement rate limiting
+5. Add API versioning
