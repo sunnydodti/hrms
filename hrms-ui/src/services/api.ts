@@ -1,6 +1,16 @@
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const getBaseUrl = () => {
+    const url = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+        return url;
+    }
+    // If protocol is missing (common on Cloudflare env vars), assume https in production, http in local
+    const protocol = window.location.protocol === 'https:' ? 'https://' : 'http://';
+    return `${protocol}${url}`;
+};
+
+const API_BASE_URL = getBaseUrl();
 
 export const api: AxiosInstance = axios.create({
     baseURL: API_BASE_URL,
