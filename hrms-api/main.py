@@ -13,6 +13,7 @@ from contextlib import asynccontextmanager
 
 from app.routes import employees, attendance, dashboard, health
 from app.database.connection import db
+from app.middleware.error_handler import ErrorHandlerMiddleware
 
 # Lifespan context manager
 @asynccontextmanager
@@ -35,6 +36,9 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+# Add Error Middleware
+app.add_middleware(ErrorHandlerMiddleware)
+
 # CORS configuration
 allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:3000").split(",")
 
@@ -45,21 +49,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    """Global exception handler to return detailed errors in development"""
-    print(f"❌ Global Error: {exc}")
-    if os.getenv("ENVIRONMENT") == "development":
-        return JSONResponse(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content={"detail": str(exc), "type": type(exc).__name__},
-        )
-    return JSONResponse(
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content={"detail": "Internal Server Error"},
-    )
 
 
 # Root endpoint
