@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 
 export const Header: React.FC = () => {
     const location = useLocation();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const navItems = [
         { path: '/', label: 'Dashboard' },
@@ -11,50 +13,69 @@ export const Header: React.FC = () => {
     ];
 
     return (
-        <header>
-            <nav className="header-nav" style={{
-                backgroundColor: '#2563eb',
-                color: 'white'
-            }}>
-                <div className="nav-container" style={{
-                    maxWidth: '80rem',
-                    margin: '0 auto',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
-                }}>
-                    <div>
-                        <h1 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+        <header className="bg-blue-600 shadow-md">
+            <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center justify-between h-20">
+                    <div className="flex-shrink-0">
+                        <h1 className="text-xl font-bold text-white">
                             HRMS Lite
                         </h1>
-                        <p style={{ fontSize: '0.875rem', opacity: 0.9 }}>
+                        <p className="text-sm text-blue-100 opacity-90">
                             Human Resource Management System
                         </p>
                     </div>
 
-                    <ul className="nav-list" style={{
-                        listStyle: 'none',
-                        display: 'flex',
-                        margin: 0,
-                        padding: 0
-                    }}>
-                        {navItems.map((item) => (
-                            <li key={item.path}>
-                                <Link
-                                    to={item.path}
-                                    style={{
-                                        color: 'white',
-                                        textDecoration: 'none',
-                                        opacity: location.pathname === item.path ? 1 : 0.9,
-                                        fontWeight: location.pathname === item.path ? 600 : 400,
-                                    }}
-                                >
-                                    {item.label}
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
+                    {/* Desktop Menu */}
+                    <div className="hidden md:block">
+                        <ul className="flex items-center space-x-8">
+                            {navItems.map((item) => (
+                                <li key={item.path}>
+                                    <Link
+                                        to={item.path}
+                                        className={`text-sm font-medium transition-colors duration-200 ${location.pathname === item.path
+                                                ? 'text-white bg-blue-700 px-3 py-2 rounded-md'
+                                                : 'text-blue-100 hover:text-white hover:bg-blue-500 px-3 py-2 rounded-md'
+                                            }`}
+                                    >
+                                        {item.label}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Mobile Menu Button */}
+                    <div className="md:hidden">
+                        <button
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            className="text-white hover:text-blue-100 focus:outline-none p-2"
+                        >
+                            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                        </button>
+                    </div>
                 </div>
+
+                {/* Mobile Menu Dropdown */}
+                {isMenuOpen && (
+                    <div className="md:hidden pb-4">
+                        <ul className="flex flex-col space-y-2">
+                            {navItems.map((item) => (
+                                <li key={item.path}>
+                                    <Link
+                                        to={item.path}
+                                        onClick={() => setIsMenuOpen(false)}
+                                        className={`block text-sm font-medium px-3 py-2 rounded-md ${location.pathname === item.path
+                                                ? 'text-white bg-blue-700'
+                                                : 'text-blue-100 hover:text-white hover:bg-blue-500'
+                                            }`}
+                                    >
+                                        {item.label}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
             </nav>
         </header>
     );
