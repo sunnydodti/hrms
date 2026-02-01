@@ -74,7 +74,7 @@ export const EmployeeList: React.FC = () => {
                 </Link>
             </div>
 
-            <Card>
+            <Card aria-busy={loading}>
                 {(!employees || employees.length === 0) && !error ? (
                     <div className="text-center py-12">
                         <p className="text-gray-400 mb-4">

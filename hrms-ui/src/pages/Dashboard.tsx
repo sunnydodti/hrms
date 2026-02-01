@@ -113,7 +113,7 @@ export const Dashboard: React.FC = () => {
             </div>
 
             <Card title="Today's Attendance">
-                {stats.recentAttendance.length === 0 ? (
+                {!stats.recentAttendance || stats.recentAttendance.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
                         No recent attendance records
                     </div>
