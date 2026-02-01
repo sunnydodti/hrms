@@ -21,40 +21,48 @@ class Database:
     async def connect(self):
         global engine, async_session_maker
 
-        # Determine which driver to use based on environment and availability
-        use_pooler = "pooler.supabase.com" in DATABASE_URL
+        if not DATABASE_URL:
+            print("❌ DATABASE_URL is not set in environment variables")
+            return
 
-        if use_pooler:
-            # Always use psycopg for pooler connections (more stable)
-            db_url = DATABASE_URL.replace("postgresql://", "postgresql+psycopg://")
-            driver_name = "psycopg"
-            connect_args = {"sslmode": "require"}
-        else:
-            # For direct connections, use asyncpg
-            db_url = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
-            driver_name = "asyncpg"
-            connect_args = {"ssl": "require"}
+        try:
+            # Determine which driver to use based on environment and availability
+            use_pooler = "pooler.supabase.com" in DATABASE_URL or "aws-1-ap-south-1" in DATABASE_URL
 
-        engine = create_async_engine(
-            db_url,
-            echo=os.getenv("ENVIRONMENT") == "development",
-            future=True,
-            # Add connection pooling and timeout settings for better cloud compatibility
-            pool_size=5,
-            max_overflow=10,
-            pool_timeout=30,
-            pool_recycle=3600,
-            connect_args=connect_args,
-        )
+            if use_pooler:
+                # Always use psycopg for pooler connections (more stable)
+                db_url = DATABASE_URL.replace("postgresql://", "postgresql+psycopg://")
+                driver_name = "psycopg"
+                connect_args = {"sslmode": "require"}
+            else:
+                # For direct connections, use asyncpg
+                db_url = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
+                driver_name = "asyncpg"
+                connect_args = {"ssl": "require"}
 
-        async_session_maker = async_sessionmaker(
-            engine,
-            class_=AsyncSession,
-            expire_on_commit=False
-        )
+            engine = create_async_engine(
+                db_url,
+                echo=os.getenv("ENVIRONMENT") == "development",
+                future=True,
+                # Add connection pooling and timeout settings for better cloud compatibility
+                pool_size=5,
+                max_overflow=10,
+                pool_timeout=30,
+                pool_recycle=3600,
+                connect_args=connect_args,
+            )
 
-        print(f"✅ PostgreSQL connected successfully using {driver_name}")
-        print(f"📍 Using database: {'Pooler (Production)' if use_pooler else 'Direct (Development)'}")
+            async_session_maker = async_sessionmaker(
+                engine,
+                class_=AsyncSession,
+                expire_on_commit=False
+            )
+
+            print(f"✅ PostgreSQL connected successfully using {driver_name}")
+            print(f"📍 Using database: {'Pooler (Production)' if use_pooler else 'Direct (Development)'}")
+        except Exception as e:
+            print(f"❌ Failed to connect to PostgreSQL: {e}")
+            raise e
 
     async def disconnect(self):
         global engine
