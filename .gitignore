@@ -204,7 +204,6 @@ vite.config.ts.timestamp-*
 *.db
 *.sqlite
 *.sqlite3
-*.sql
 *.dump
 
 # MongoDB
@@ -465,3 +464,7 @@ docker-compose.override.yml
 
 # Project specific
 *.code-workspace
+hrms-api/hrms-api-docs-bruno/hrms-api-docs-bruno/base.bru
+hrms-api/hrms-api-docs-bruno/hrms-api-docs-bruno/bruno.json
+hrms-api/hrms-api-docs-bruno/hrms-api-docs-bruno/environments/api-base.bru
+hrms-api/hrms-api-docs-bruno/hrms-api-docs-bruno/environments/hrms-api-env-bruno.bru
