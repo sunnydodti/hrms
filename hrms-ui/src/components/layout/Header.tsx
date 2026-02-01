@@ -12,12 +12,11 @@ export const Header: React.FC = () => {
 
     return (
         <header>
-            <nav style={{
+            <nav className="header-nav" style={{
                 backgroundColor: '#2563eb',
-                color: 'white',
-                padding: '1rem 2rem'
+                color: 'white'
             }}>
-                <div style={{
+                <div className="nav-container" style={{
                     maxWidth: '80rem',
                     margin: '0 auto',
                     display: 'flex',
@@ -33,10 +32,9 @@ export const Header: React.FC = () => {
                         </p>
                     </div>
 
-                    <ul style={{
+                    <ul className="nav-list" style={{
                         listStyle: 'none',
                         display: 'flex',
-                        gap: '2rem',
                         margin: 0,
                         padding: 0
                     }}>
