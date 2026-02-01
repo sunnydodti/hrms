@@ -68,13 +68,13 @@ async def get_all_employees():
     "/{employee_id}",
     response_model=EmployeeResponse,
     summary="Get employee by ID",
-    description="Retrieve a specific employee by their database ID"
+    description="Retrieve a specific employee by their employee ID (e.g., EMP001)"
 )
 async def get_employee(employee_id: str):
     """
-    Get a specific employee by their database ID.
+    Get a specific employee by their employee ID.
     
-    - **employee_id**: Database ID of the employee
+    - **employee_id**: Employee ID (e.g., EMP001)
     
     Returns 404 if employee not found.
     """
@@ -92,13 +92,13 @@ async def get_employee(employee_id: str):
     "/{employee_id}",
     response_model=EmployeeDeleteResponse,
     summary="Delete an employee",
-    description="Delete an employee by their database ID"
+    description="Delete an employee by their employee ID (e.g., EMP001)"
 )
 async def delete_employee(employee_id: str):
     """
     Delete an employee from the system.
     
-    - **employee_id**: Database ID of the employee to delete
+    - **employee_id**: Employee ID (e.g., EMP001) to delete
     
     Returns confirmation message with employee ID.
     Returns 404 if employee not found.

@@ -48,7 +48,7 @@ class EmployeeService:
                     select(Employee).where(Employee.employee_id == employee_id)
                 )
                 if existing.scalar_one_or_none():
-                    raise HTTPException(status_code=400, detail="Employee ID already exists")
+                    raise ValueError("Employee ID already exists")
 
                 # Create new employee
                 employee = Employee(
@@ -73,7 +73,7 @@ class EmployeeService:
 
             except IntegrityError:
                 await session.rollback()
-                raise HTTPException(status_code=400, detail="Employee ID already exists")
+                raise ValueError("Employee ID already exists")
 
     async def get_all_employees(self) -> List[EmployeeResponse]:
         """
@@ -100,21 +100,24 @@ class EmployeeService:
 
     async def get_employee_by_id(self, employee_id: str) -> EmployeeResponse:
         """
-        Get employee by ID
-
+        Get employee by employee ID (e.g., EMP001)
+        
         Args:
-            employee_id: Employee database ID
-
+            employee_id: Employee identifier (e.g., EMP001)
+            
         Returns:
             Employee response
-
+            
         Raises:
-            HTTPException: If employee not found
+            ValueError: If employee not found
         """
         async with db.get_session() as session:
-            employee = await session.get(Employee, employee_id)
+            employee = await session.execute(
+                select(Employee).where(Employee.employee_id == employee_id)
+            )
+            employee = employee.scalar_one_or_none()
             if not employee:
-                raise HTTPException(status_code=404, detail="Employee not found")
+                raise ValueError("Employee not found")
 
             return EmployeeResponse(
                 id=str(employee.id),
@@ -130,18 +133,21 @@ class EmployeeService:
         Delete an employee
 
         Args:
-            employee_id: Employee database ID to delete
+            employee_id: Employee identifier (e.g., EMP001) to delete
 
         Returns:
             Deletion confirmation
 
         Raises:
-            HTTPException: If employee not found
+            ValueError: If employee not found
         """
         async with db.get_session() as session:
-            employee = await session.get(Employee, employee_id)
+            employee = await session.execute(
+                select(Employee).where(Employee.employee_id == employee_id)
+            )
+            employee = employee.scalar_one_or_none()
             if not employee:
-                raise HTTPException(status_code=404, detail="Employee not found")
+                raise ValueError("Employee not found")
 
             employee_id_str = employee.employee_id
             await session.delete(employee)
