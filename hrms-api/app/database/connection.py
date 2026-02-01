@@ -26,7 +26,8 @@ class Database:
         engine = create_async_engine(
             db_url,
             echo=os.getenv("ENVIRONMENT") == "development",
-            future=True
+            future=True,
+            connect_args={"ssl": "require"},
         )
         
         async_session_maker = async_sessionmaker(
