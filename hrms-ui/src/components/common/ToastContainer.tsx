@@ -7,7 +7,7 @@ export const ToastContainer: React.FC = () => {
 
     return (
         <>
-            {toasts.map((toast, index) => (
+            {toasts.map((toast) => (
                 <Toast
                     key={toast.id}
                     toast={toast}

@@ -6,14 +6,14 @@ import { Loading } from '../components/common/Loading';
 import { employeeService } from '../services/employeeService';
 import { attendanceService } from '../services/attendanceService';
 import { type Employee } from '../types/employee';
-import { type Attendance, type AttendanceCreate } from '../types/attendance';
+import { type Attendance as AttendanceRecord, type AttendanceCreate } from '../types/attendance';
 import { useToast } from '../context/ToastContext';
 
 export const Attendance: React.FC = () => {
     const { showToast } = useToast();
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [selectedEmployee, setSelectedEmployee] = useState<string>('');
-    const [attendanceHistory, setAttendanceHistory] = useState<Attendance[]>([]);
+    const [attendanceHistory, setAttendanceHistory] = useState<AttendanceRecord[]>([]);
     const [loadingEmployees, setLoadingEmployees] = useState(true);
     const [loadingHistory, setLoadingHistory] = useState(false);
     const [submitting, setSubmitting] = useState(false);
