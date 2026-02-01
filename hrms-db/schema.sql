@@ -4,6 +4,9 @@
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- Attendance status enum
+CREATE TYPE attendance_status AS ENUM ('Present', 'Absent');
+
 -- Employees table
 CREATE TABLE employees (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -13,12 +16,6 @@ CREATE TABLE employees (
     department VARCHAR(100) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
-
--- Create index on employee_id for faster lookups
-CREATE INDEX idx_employees_employee_id ON employees(employee_id);
-
--- Attendance status enum
-CREATE TYPE attendance_status AS ENUM ('Present', 'Absent');
 
 -- Attendance table
 CREATE TABLE attendance (
@@ -39,6 +36,7 @@ CREATE TABLE attendance (
 );
 
 -- Create indexes for better query performance
+CREATE INDEX idx_employees_employee_id ON employees(employee_id);
 CREATE INDEX idx_attendance_employee_id ON attendance(employee_id);
 CREATE INDEX idx_attendance_date ON attendance(date);
 CREATE INDEX idx_attendance_employee_date ON attendance(employee_id, date);
