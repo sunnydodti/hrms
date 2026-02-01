@@ -6,8 +6,8 @@ from app.database.connection import Base
 import enum
 
 class AttendanceStatus(enum.Enum):
-    PRESENT = "Present"
-    ABSENT = "Absent"
+    Present = "Present"
+    Absent = "Absent"
 
 class Attendance(Base):
     __tablename__ = "attendance"
